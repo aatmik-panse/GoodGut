@@ -22,6 +22,7 @@ export default function ChewTracker({ onSessionComplete }: ChewTrackerProps) {
   const [chewCount, setChewCount] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Timer and lap tracking
   const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
@@ -393,158 +394,178 @@ export default function ChewTracker({ onSessionComplete }: ChewTrackerProps) {
     outputRange: [0, -20],
   });
 
+  const themeStyles = isDarkMode ? darkStyles : lightStyles;
+  
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Chew Counter 🦷</Text>
-
-      {/* Mode Selector */}
-      <View style={styles.modeSelector}>
-        <TouchableOpacity
-          style={[styles.modeButton, mode === "tap" && styles.activeModeButton]}
-          onPress={() => setMode("tap")}
-        >
-          <Text
-            style={[styles.modeText, mode === "tap" && styles.activeModeText]}
+    <View style={[styles.container, themeStyles.container]}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header with Dark Mode Toggle */}
+        <View style={styles.header}>
+          <Text style={[styles.title, themeStyles.title]}>Chew Counter 🦷</Text>
+          <TouchableOpacity 
+            style={[styles.darkModeToggle, themeStyles.darkModeToggle]}
+            onPress={() => setIsDarkMode(!isDarkMode)}
           >
-            Tap Mode
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.modeButton,
-            mode === "timer" && styles.activeModeButton,
-          ]}
-          onPress={() => setMode("timer")}
-        >
-          <Text
-            style={[styles.modeText, mode === "timer" && styles.activeModeText]}
-          >
-            Timer Mode
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Enhanced Progress Bar with Glow */}
-      <View style={styles.progressContainer}>
-        <View style={styles.progressBar}>
-          <Animated.View
-            style={[styles.progressFill, { width: progressWidth }]}
-          />
-          <Animated.View
-            style={[
-              styles.progressGlow,
-              {
-                width: progressWidth,
-                opacity: glowOpacity,
-              },
-            ]}
-          />
-        </View>
-        <Animated.Text
-          style={[
-            styles.progressText,
-            { transform: [{ translateY: bounceTranslateY }] },
-          ]}
-        >
-          {chewCount}/{targetChews} chews
-        </Animated.Text>
-      </View>
-
-      {/* Enhanced Main Action Area */}
-      {mode === "tap" ? (
-        <Animated.View
-          style={[styles.tapArea, { transform: [{ scale: pulseAnim }] }]}
-        >
-          <View style={styles.tapButtonContainer}>
-            {/* Ripple Effect */}
-            <Animated.View
-              style={[
-                styles.rippleEffect,
-                {
-                  transform: [{ scale: rippleScale }],
-                  opacity: rippleOpacity,
-                },
-              ]}
-            />
-            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-              <TouchableOpacity style={styles.tapButton} onPress={handleTap}>
-                <Text style={styles.tapButtonText}>TAP TO CHEW</Text>
-                <Animated.Text
-                  style={[
-                    styles.chewCount,
-                    { transform: [{ scale: countAnim }] },
-                  ]}
-                >
-                  {chewCount}
-                </Animated.Text>
-              </TouchableOpacity>
-            </Animated.View>
-          </View>
-        </Animated.View>
-      ) : (
-        <View style={styles.timerArea}>
-          <Text style={styles.timerText}>{timeLeft}s</Text>
-          <TouchableOpacity
-            style={[styles.timerButton, isActive && styles.activeTimerButton]}
-            onPress={startTimer}
-            disabled={isActive}
-          >
-            <Text style={styles.timerButtonText}>
-              {isActive ? "CHEWING..." : "START 30s CHEW"}
+            <Text style={[styles.darkModeText, themeStyles.darkModeText]}>
+              {isDarkMode ? '☀️' : '🌙'}
             </Text>
           </TouchableOpacity>
         </View>
-      )}
 
-      {/* Action Buttons */}
-      <View style={styles.actionButtonsContainer}>
-        <TouchableOpacity 
-          style={[
-            styles.actionButton, 
-            styles.finishButton,
-            (chewCount === 0 && !isActive) && styles.disabledButton
-          ]} 
-          onPress={finishCurrentChew}
-          disabled={chewCount === 0 && !isActive}
-        >
-          <Text style={[
-            styles.actionButtonText,
-            styles.finishButtonText,
-            (chewCount === 0 && !isActive) && styles.disabledButtonText
-          ]}>Finish This Chew</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={[styles.actionButton, styles.resetButton]} onPress={resetSession}>
-          <Text style={[styles.actionButtonText, styles.resetButtonText]}>Reset</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Session Timer */}
-      <View style={styles.timerContainer}>
-        <Text style={styles.timerLabel}>Session Time</Text>
-        <Text style={styles.timerDisplay}>
-          {sessionStartTime ? formatTime(currentTime) : "00:00"}
-        </Text>
-      </View>
-
-      {/* Cycle Times List */}
-      {lapTimes.length > 0 && (
-        <View style={styles.lapContainer}>
-          <Text style={styles.lapHeader}>Completed Cycles</Text>
-          <ScrollView
-            style={styles.lapScrollView}
-            showsVerticalScrollIndicator={false}
+        {/* Mode Selector */}
+        <View style={[styles.modeSelector, themeStyles.modeSelector]}>
+          <TouchableOpacity
+            style={[styles.modeButton, mode === "tap" && styles.activeModeButton]}
+            onPress={() => setMode("tap")}
           >
-            {lapTimes.map((lap, index) => (
-              <View key={index} style={styles.lapItem}>
-                <Text style={styles.lapText}>
-                  Cycle {lap.lap}: {lap.time}
-                </Text>
-              </View>
-            ))}
-          </ScrollView>
+            <Text
+              style={[styles.modeText, mode === "tap" && styles.activeModeText]}
+            >
+              Tap Mode
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.modeButton,
+              mode === "timer" && styles.activeModeButton,
+            ]}
+            onPress={() => setMode("timer")}
+          >
+            <Text
+              style={[styles.modeText, mode === "timer" && styles.activeModeText]}
+            >
+              Timer Mode
+            </Text>
+          </TouchableOpacity>
         </View>
-      )}
+
+        {/* Enhanced Progress Bar with Glow */}
+        <View style={styles.progressContainer}>
+          <View style={styles.progressBar}>
+            <Animated.View
+              style={[styles.progressFill, { width: progressWidth }]}
+            />
+            <Animated.View
+              style={[
+                styles.progressGlow,
+                {
+                  width: progressWidth,
+                  opacity: glowOpacity,
+                },
+              ]}
+            />
+          </View>
+          <Animated.Text
+            style={[
+              styles.progressText,
+              { transform: [{ translateY: bounceTranslateY }] },
+            ]}
+          >
+            {chewCount}/{targetChews} chews
+          </Animated.Text>
+        </View>
+
+        {/* Enhanced Main Action Area */}
+        {mode === "tap" ? (
+          <Animated.View
+            style={[styles.tapArea, { transform: [{ scale: pulseAnim }] }]}
+          >
+            <View style={styles.tapButtonContainer}>
+              {/* Ripple Effect */}
+              <Animated.View
+                style={[
+                  styles.rippleEffect,
+                  {
+                    transform: [{ scale: rippleScale }],
+                    opacity: rippleOpacity,
+                  },
+                ]}
+              />
+              <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+                <TouchableOpacity style={styles.tapButton} onPress={handleTap}>
+                  <Text style={styles.tapButtonText}>TAP TO CHEW</Text>
+                  <Animated.Text
+                    style={[
+                      styles.chewCount,
+                      { transform: [{ scale: countAnim }] },
+                    ]}
+                  >
+                    {chewCount}
+                  </Animated.Text>
+                </TouchableOpacity>
+              </Animated.View>
+            </View>
+          </Animated.View>
+        ) : (
+          <View style={styles.timerArea}>
+            <Text style={styles.timerText}>{timeLeft}s</Text>
+            <TouchableOpacity
+              style={[styles.timerButton, isActive && styles.activeTimerButton]}
+              onPress={startTimer}
+              disabled={isActive}
+            >
+              <Text style={styles.timerButtonText}>
+                {isActive ? "CHEWING..." : "START 30s CHEW"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Action Buttons */}
+        <View style={styles.actionButtonsContainer}>
+          <TouchableOpacity 
+            style={[
+              styles.actionButton, 
+              styles.finishButton,
+              (chewCount === 0 && !isActive) && styles.disabledButton
+            ]} 
+            onPress={finishCurrentChew}
+            disabled={chewCount === 0 && !isActive}
+          >
+            <Text style={[
+              styles.actionButtonText,
+              styles.finishButtonText,
+              (chewCount === 0 && !isActive) && styles.disabledButtonText
+            ]}>Finish This Chew</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={[styles.actionButton, styles.resetButton]} onPress={resetSession}>
+            <Text style={[styles.actionButtonText, styles.resetButtonText]}>Reset</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Session Timer */}
+        <View style={[styles.timerContainer, themeStyles.timerContainer]}>
+          <Text style={[styles.timerLabel, themeStyles.timerLabel]}>Session Time</Text>
+          <Text style={[styles.timerDisplay, themeStyles.timerDisplay]}>
+            {sessionStartTime ? formatTime(currentTime) : "00:00"}
+          </Text>
+        </View>
+
+        {/* Cycle Times List */}
+        {lapTimes.length > 0 && (
+          <View style={[styles.lapContainer, themeStyles.lapContainer]}>
+            <Text style={[styles.lapHeader, themeStyles.lapHeader]}>Completed Cycles</Text>
+            <ScrollView
+              style={styles.lapScrollView}
+              showsVerticalScrollIndicator={false}
+              nestedScrollEnabled={true}
+            >
+              {lapTimes.map((lap, index) => (
+                <View key={index} style={[styles.lapItem, themeStyles.lapItem]}>
+                  <Text style={[styles.lapText, themeStyles.lapText]}>
+                    Cycle {lap.lap}: {lap.time}
+                  </Text>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 }
@@ -552,9 +573,38 @@ export default function ChewTracker({ onSessionComplete }: ChewTrackerProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "#f8f9ff",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 20,
     alignItems: "center",
+    minHeight: "100%",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginBottom: 20,
+  },
+  darkModeToggle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#e2e8f0",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  darkModeText: {
+    fontSize: 20,
   },
   title: {
     fontSize: 28,
@@ -789,5 +839,91 @@ const styles = StyleSheet.create({
     color: "#4a5568",
     fontWeight: "500",
     fontFamily: "monospace",
+  },
+});
+
+// Light theme styles
+const lightStyles = StyleSheet.create({
+  container: {
+    backgroundColor: "#f8f9ff",
+  },
+  title: {
+    color: "#2d3748",
+  },
+  darkModeToggle: {
+    backgroundColor: "#e2e8f0",
+  },
+  darkModeText: {
+    color: "#4a5568",
+  },
+  modeSelector: {
+    backgroundColor: "#e2e8f0",
+  },
+  timerContainer: {
+    backgroundColor: "#ffffff",
+    shadowColor: "#000",
+  },
+  timerLabel: {
+    color: "#4a5568",
+  },
+  timerDisplay: {
+    color: "#667eea",
+  },
+  lapContainer: {
+    backgroundColor: "#ffffff",
+    shadowColor: "#000",
+  },
+  lapHeader: {
+    color: "#2d3748",
+  },
+  lapItem: {
+    backgroundColor: "#f8f9ff",
+    borderLeftColor: "#667eea",
+  },
+  lapText: {
+    color: "#4a5568",
+  },
+});
+
+// Dark theme styles
+const darkStyles = StyleSheet.create({
+  container: {
+    backgroundColor: "#1a202c",
+  },
+  title: {
+    color: "#f7fafc",
+  },
+  darkModeToggle: {
+    backgroundColor: "#2d3748",
+  },
+  darkModeText: {
+    color: "#e2e8f0",
+  },
+  modeSelector: {
+    backgroundColor: "#2d3748",
+  },
+  timerContainer: {
+    backgroundColor: "#2d3748",
+    shadowColor: "#000",
+  },
+  timerLabel: {
+    color: "#e2e8f0",
+  },
+  timerDisplay: {
+    color: "#90cdf4",
+  },
+  lapContainer: {
+    backgroundColor: "#2d3748",
+    shadowColor: "#000",
+  },
+  lapHeader: {
+    color: "#f7fafc",
+  },
+  lapItem: {
+    backgroundColor: "#4a5568",
+    borderLeftColor: "#90cdf4",
+  },
+  lapText: {
+    color: "#e2e8f0",
   },
 });
