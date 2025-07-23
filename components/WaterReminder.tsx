@@ -11,6 +11,7 @@ import {
 import * as Notifications from "expo-notifications";
 import { SchedulableTriggerInputTypes } from "expo-notifications";
 import { storeData, getData, getRandomWaterReminder } from "../utils";
+import { useTheme } from "../contexts/ThemeContext";
 
 // Configure notifications
 Notifications.setNotificationHandler({
@@ -23,6 +24,7 @@ Notifications.setNotificationHandler({
 });
 
 export default function WaterReminder() {
+  const { theme } = useTheme();
   const [waterCount, setWaterCount] = useState(0);
   const [dailyGoal] = useState(8); // 8 glasses per day
   const [remindersEnabled, setRemindersEnabled] = useState(false);
@@ -178,23 +180,23 @@ export default function WaterReminder() {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>Water Tracker 💧</Text>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
+      <Text style={[styles.title, { color: theme.text }]}>Water Tracker 💧</Text>
 
       {/* Progress Section */}
-      <View style={styles.progressSection}>
-        <Text style={styles.progressText}>
+      <View style={[styles.progressSection, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
+        <Text style={[styles.progressText, { color: theme.text }]}>
           {waterCount}/{dailyGoal} glasses
         </Text>
-        <View style={styles.progressBar}>
+        <View style={[styles.progressBar, { backgroundColor: theme.border }]}>
           <View
             style={[
               styles.progressFill,
-              { width: `${getProgressPercentage()}%` },
+              { width: `${getProgressPercentage()}%`, backgroundColor: theme.primary },
             ]}
           />
         </View>
-        <Text style={styles.motivationalText}>{getMotivationalMessage()}</Text>
+        <Text style={[styles.motivationalText, { color: theme.textSecondary }]}>{getMotivationalMessage()}</Text>
       </View>
 
       {/* Water Glasses Visual */}

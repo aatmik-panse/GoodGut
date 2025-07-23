@@ -12,17 +12,18 @@ import {
 import * as Haptics from "expo-haptics";
 import { soundUtils } from "../utils/soundUtils";
 import { ChewSession } from "../types";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface ChewTrackerProps {
   onSessionComplete: (session: ChewSession) => void;
 }
 
 export default function ChewTracker({ onSessionComplete }: ChewTrackerProps) {
+  const { theme } = useTheme();
   const [mode, setMode] = useState<"tap" | "timer">("tap");
   const [chewCount, setChewCount] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30);
-  const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Timer and lap tracking
   const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
@@ -394,30 +395,20 @@ export default function ChewTracker({ onSessionComplete }: ChewTrackerProps) {
     outputRange: [0, -20],
   });
 
-  const themeStyles = isDarkMode ? darkStyles : lightStyles;
-  
   return (
-    <View style={[styles.container, themeStyles.container]}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header with Dark Mode Toggle */}
-        <View style={styles.header}>
-          <Text style={[styles.title, themeStyles.title]}>Chew Counter 🦷</Text>
-          <TouchableOpacity 
-            style={[styles.darkModeToggle, themeStyles.darkModeToggle]}
-            onPress={() => setIsDarkMode(!isDarkMode)}
-          >
-            <Text style={[styles.darkModeText, themeStyles.darkModeText]}>
-              {isDarkMode ? '☀️' : '🌙'}
-            </Text>
-          </TouchableOpacity>
+        {/* Header */}
+        <View style={styles.titleContainer}>
+          <Text style={[styles.title, { color: theme.text }]}>Chew Counter 🦷</Text>
         </View>
 
         {/* Mode Selector */}
-        <View style={[styles.modeSelector, themeStyles.modeSelector]}>
+        <View style={[styles.modeSelector, { backgroundColor: theme.buttonSecondary }]}>
           <TouchableOpacity
             style={[styles.modeButton, mode === "tap" && styles.activeModeButton]}
             onPress={() => setMode("tap")}
@@ -539,25 +530,25 @@ export default function ChewTracker({ onSessionComplete }: ChewTrackerProps) {
         </View>
 
         {/* Session Timer */}
-        <View style={[styles.timerContainer, themeStyles.timerContainer]}>
-          <Text style={[styles.timerLabel, themeStyles.timerLabel]}>Session Time</Text>
-          <Text style={[styles.timerDisplay, themeStyles.timerDisplay]}>
+        <View style={[styles.timerContainer, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
+          <Text style={[styles.timerLabel, { color: theme.textSecondary }]}>Session Time</Text>
+          <Text style={[styles.timerDisplay, { color: theme.primary }]}>
             {sessionStartTime ? formatTime(currentTime) : "00:00"}
           </Text>
         </View>
 
         {/* Cycle Times List */}
         {lapTimes.length > 0 && (
-          <View style={[styles.lapContainer, themeStyles.lapContainer]}>
-            <Text style={[styles.lapHeader, themeStyles.lapHeader]}>Completed Cycles</Text>
+          <View style={[styles.lapContainer, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
+            <Text style={[styles.lapHeader, { color: theme.text }]}>Completed Cycles</Text>
             <ScrollView
               style={styles.lapScrollView}
               showsVerticalScrollIndicator={false}
               nestedScrollEnabled={true}
             >
               {lapTimes.map((lap, index) => (
-                <View key={index} style={[styles.lapItem, themeStyles.lapItem]}>
-                  <Text style={[styles.lapText, themeStyles.lapText]}>
+                <View key={index} style={[styles.lapItem, { backgroundColor: theme.surfaceSecondary, borderLeftColor: theme.primary }]}>
+                  <Text style={[styles.lapText, { color: theme.textSecondary }]}>
                     Cycle {lap.lap}: {lap.time}
                   </Text>
                 </View>
@@ -583,28 +574,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     minHeight: "100%",
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  titleContainer: {
     width: "100%",
-    marginBottom: 20,
-  },
-  darkModeToggle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "#e2e8f0",
-    justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  darkModeText: {
-    fontSize: 20,
+    marginBottom: 20,
   },
   title: {
     fontSize: 28,
@@ -839,91 +812,5 @@ const styles = StyleSheet.create({
     color: "#4a5568",
     fontWeight: "500",
     fontFamily: "monospace",
-  },
-});
-
-// Light theme styles
-const lightStyles = StyleSheet.create({
-  container: {
-    backgroundColor: "#f8f9ff",
-  },
-  title: {
-    color: "#2d3748",
-  },
-  darkModeToggle: {
-    backgroundColor: "#e2e8f0",
-  },
-  darkModeText: {
-    color: "#4a5568",
-  },
-  modeSelector: {
-    backgroundColor: "#e2e8f0",
-  },
-  timerContainer: {
-    backgroundColor: "#ffffff",
-    shadowColor: "#000",
-  },
-  timerLabel: {
-    color: "#4a5568",
-  },
-  timerDisplay: {
-    color: "#667eea",
-  },
-  lapContainer: {
-    backgroundColor: "#ffffff",
-    shadowColor: "#000",
-  },
-  lapHeader: {
-    color: "#2d3748",
-  },
-  lapItem: {
-    backgroundColor: "#f8f9ff",
-    borderLeftColor: "#667eea",
-  },
-  lapText: {
-    color: "#4a5568",
-  },
-});
-
-// Dark theme styles
-const darkStyles = StyleSheet.create({
-  container: {
-    backgroundColor: "#1a202c",
-  },
-  title: {
-    color: "#f7fafc",
-  },
-  darkModeToggle: {
-    backgroundColor: "#2d3748",
-  },
-  darkModeText: {
-    color: "#e2e8f0",
-  },
-  modeSelector: {
-    backgroundColor: "#2d3748",
-  },
-  timerContainer: {
-    backgroundColor: "#2d3748",
-    shadowColor: "#000",
-  },
-  timerLabel: {
-    color: "#e2e8f0",
-  },
-  timerDisplay: {
-    color: "#90cdf4",
-  },
-  lapContainer: {
-    backgroundColor: "#2d3748",
-    shadowColor: "#000",
-  },
-  lapHeader: {
-    color: "#f7fafc",
-  },
-  lapItem: {
-    backgroundColor: "#4a5568",
-    borderLeftColor: "#90cdf4",
-  },
-  lapText: {
-    color: "#e2e8f0",
   },
 });

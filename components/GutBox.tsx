@@ -9,8 +9,10 @@ import {
 } from "react-native";
 import { GutBoxItem } from "../types";
 import { gutBoxItems, storeData, getData } from "../utils";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function GutBox() {
+  const { theme } = useTheme();
   const [items, setItems] = useState<GutBoxItem[]>([]);
   const [availableCount, setAvailableCount] = useState(0);
 
@@ -123,29 +125,29 @@ export default function GutBox() {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>Gut Box Checklist 📦</Text>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
+      <Text style={[styles.title, { color: theme.text }]}>Gut Box Checklist 📦</Text>
 
       {/* Progress Section */}
-      <View style={styles.progressSection}>
-        <Text style={styles.progressText}>
+      <View style={[styles.progressSection, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
+        <Text style={[styles.progressText, { color: theme.text }]}>
           {availableCount}/{items.length} items ready
         </Text>
-        <View style={styles.progressBar}>
+        <View style={[styles.progressBar, { backgroundColor: theme.border }]}>
           <View
             style={[
               styles.progressFill,
-              { width: `${getCompletionPercentage()}%` },
+              { width: `${getCompletionPercentage()}%`, backgroundColor: theme.primary },
             ]}
           />
         </View>
-        <Text style={styles.motivationalText}>{getMotivationalMessage()}</Text>
+        <Text style={[styles.motivationalText, { color: theme.textSecondary }]}>{getMotivationalMessage()}</Text>
       </View>
 
       {/* Instructions */}
-      <View style={styles.instructionsCard}>
-        <Text style={styles.instructionsTitle}>🎯 How it works</Text>
-        <Text style={styles.instructionsText}>
+      <View style={[styles.instructionsCard, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
+        <Text style={[styles.instructionsTitle, { color: theme.text }]}>🎯 How it works</Text>
+        <Text style={[styles.instructionsText, { color: theme.textSecondary }]}>
           Tap items you have in your hostel room or locker. Build your digestive
           emergency kit!
         </Text>
@@ -158,7 +160,8 @@ export default function GutBox() {
             key={item.id}
             style={[
               styles.itemCard,
-              item.isAvailable && styles.availableItemCard,
+              { backgroundColor: theme.surface, shadowColor: theme.shadow },
+              item.isAvailable && { backgroundColor: theme.successLight },
             ]}
             onPress={() => toggleItem(item.id)}
           >
@@ -173,26 +176,27 @@ export default function GutBox() {
             <Text
               style={[
                 styles.itemName,
+                { color: theme.text },
                 item.isAvailable && styles.availableItemName,
               ]}
             >
               {item.name}
             </Text>
-            <Text style={styles.itemDescription}>{item.description}</Text>
+            <Text style={[styles.itemDescription, { color: theme.textSecondary }]}>{item.description}</Text>
             <View
               style={[
                 styles.statusBadge,
                 item.isAvailable
-                  ? styles.availableBadge
-                  : styles.unavailableBadge,
+                  ? { backgroundColor: theme.success }
+                  : { backgroundColor: theme.border },
               ]}
             >
               <Text
                 style={[
                   styles.statusText,
                   item.isAvailable
-                    ? styles.availableStatusText
-                    : styles.unavailableStatusText,
+                    ? { color: theme.buttonText }
+                    : { color: theme.textSecondary },
                 ]}
               >
                 {item.isAvailable ? "In Stock" : "Need to Get"}
@@ -203,55 +207,55 @@ export default function GutBox() {
       </View>
 
       {/* Shopping Tips */}
-      <View style={styles.tipsSection}>
-        <Text style={styles.tipsTitle}>🛒 Shopping Tips</Text>
-        <View style={styles.tipCard}>
+      <View style={[styles.tipsSection, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
+        <Text style={[styles.tipsTitle, { color: theme.text }]}>🛍️ Shopping Tips</Text>
+        <View style={[styles.tipCard, { backgroundColor: theme.background }]}>
           <Text style={styles.tipEmoji}>💡</Text>
-          <Text style={styles.tipText}>
+          <Text style={[styles.tipText, { color: theme.textSecondary }]}>
             Most items are available at local grocery stores or medical shops
           </Text>
         </View>
-        <View style={styles.tipCard}>
+        <View style={[styles.tipCard, { backgroundColor: theme.background }]}>
           <Text style={styles.tipEmoji}>💰</Text>
-          <Text style={styles.tipText}>
+          <Text style={[styles.tipText, { color: theme.textSecondary }]}>
             Buy in small quantities - they last long and don't take much space
           </Text>
         </View>
-        <View style={styles.tipCard}>
+        <View style={[styles.tipCard, { backgroundColor: theme.background }]}>
           <Text style={styles.tipEmoji}>📦</Text>
-          <Text style={styles.tipText}>
+          <Text style={[styles.tipText, { color: theme.textSecondary }]}>
             Store in airtight containers to keep them fresh
           </Text>
         </View>
       </View>
 
       {/* Usage Guide */}
-      <View style={styles.usageSection}>
-        <Text style={styles.usageTitle}>📋 Quick Usage Guide</Text>
-        <View style={styles.usageItem}>
+      <View style={[styles.usageSection, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
+        <Text style={[styles.usageTitle, { color: theme.text }]}>📋 Quick Usage Guide</Text>
+        <View style={[styles.usageItem, { borderBottomColor: theme.border }]}>
           <Text style={styles.usageEmoji}>🌾</Text>
           <View style={styles.usageContent}>
-            <Text style={styles.usageName}>Jeera Water</Text>
-            <Text style={styles.usageText}>
+            <Text style={[styles.usageName, { color: theme.text }]}>Jeera Water</Text>
+            <Text style={[styles.usageText, { color: theme.textSecondary }]}>
               Soak 1 tsp in water overnight, drink in morning
             </Text>
           </View>
         </View>
-        <View style={styles.usageItem}>
+        <View style={[styles.usageItem, { borderBottomColor: theme.border }]}>
           <Text style={styles.usageEmoji}>🌿</Text>
           <View style={styles.usageContent}>
-            <Text style={styles.usageName}>Saunf</Text>
-            <Text style={styles.usageText}>
+            <Text style={[styles.usageName, { color: theme.text }]}>Saunf</Text>
+            <Text style={[styles.usageText, { color: theme.textSecondary }]}>
               Keep fennel seeds (saunf) handy - natural breath freshener after
               meals
             </Text>
           </View>
         </View>
-        <View style={styles.usageItem}>
+        <View style={[styles.usageItem, { borderBottomColor: theme.border }]}>
           <Text style={styles.usageEmoji}>🌱</Text>
           <View style={styles.usageContent}>
-            <Text style={styles.usageName}>Ajwain</Text>
-            <Text style={styles.usageText}>
+            <Text style={[styles.usageName, { color: theme.text }]}>Ajwain</Text>
+            <Text style={[styles.usageText, { color: theme.textSecondary }]}>
               Chew 1/4 tsp with warm water for acidity
             </Text>
           </View>
@@ -259,8 +263,8 @@ export default function GutBox() {
       </View>
 
       {/* Reset Button */}
-      <TouchableOpacity style={styles.resetButton} onPress={resetAllItems}>
-        <Text style={styles.resetButtonText}>🔄 Reset All Items</Text>
+      <TouchableOpacity style={[styles.resetButton, { backgroundColor: theme.danger }]} onPress={resetAllItems}>
+        <Text style={[styles.resetButtonText, { color: theme.buttonText }]}>🔄 Reset All Items</Text>
       </TouchableOpacity>
     </ScrollView>
   );

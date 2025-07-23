@@ -9,8 +9,10 @@ import {
 } from "react-native";
 import { DigestiveTip } from "../types";
 import { digestiveTips, getRandomTip } from "../utils";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function DigestiveTips() {
+  const { theme } = useTheme();
   const [todaysTip, setTodaysTip] = useState<DigestiveTip>(digestiveTips[0]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [fadeAnim] = useState(new Animated.Value(0));
@@ -62,24 +64,24 @@ export default function DigestiveTips() {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>What To Eat Today 🍽️</Text>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
+      <Text style={[styles.title, { color: theme.text }]}>What To Eat Today 🍽️</Text>
 
       {/* Today's Featured Tip */}
-      <Animated.View style={[styles.featuredTip, { opacity: fadeAnim }]}>
+      <Animated.View style={[styles.featuredTip, { opacity: fadeAnim, backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
         <View style={styles.featuredHeader}>
           <Text style={styles.featuredEmoji}>{todaysTip.emoji}</Text>
           <TouchableOpacity
-            style={styles.refreshButton}
+            style={[styles.refreshButton, { backgroundColor: theme.primary }]}
             onPress={getNewRandomTip}
           >
             <Text style={styles.refreshText}>🔄</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.featuredTitle}>{todaysTip.title}</Text>
-        <Text style={styles.featuredDescription}>{todaysTip.description}</Text>
-        <View style={styles.categoryBadge}>
-          <Text style={styles.categoryBadgeText}>
+        <Text style={[styles.featuredTitle, { color: theme.text }]}>{todaysTip.title}</Text>
+        <Text style={[styles.featuredDescription, { color: theme.textSecondary }]}>{todaysTip.description}</Text>
+        <View style={[styles.categoryBadge, { backgroundColor: theme.primaryLight }]}>
+          <Text style={[styles.categoryBadgeText, { color: theme.text }]}>
             {categories.find((cat) => cat.key === todaysTip.category)?.label ||
               "General"}
           </Text>
@@ -98,7 +100,8 @@ export default function DigestiveTips() {
             key={category.key}
             style={[
               styles.categoryButton,
-              selectedCategory === category.key && styles.activeCategoryButton,
+              { backgroundColor: theme.surface, borderColor: theme.border },
+              selectedCategory === category.key && [styles.activeCategoryButton, { backgroundColor: theme.primary, borderColor: theme.primary }],
             ]}
             onPress={() => setSelectedCategory(category.key)}
           >
@@ -106,7 +109,8 @@ export default function DigestiveTips() {
             <Text
               style={[
                 styles.categoryText,
-                selectedCategory === category.key && styles.activeCategoryText,
+                { color: theme.textSecondary },
+                selectedCategory === category.key && [styles.activeCategoryText, { color: '#ffffff' }],
               ]}
             >
               {category.label}
@@ -118,12 +122,12 @@ export default function DigestiveTips() {
       {/* All Tips */}
       <View style={styles.tipsGrid}>
         {getFilteredTips().map((tip) => (
-          <View key={tip.id} style={styles.tipCard}>
+          <View key={tip.id} style={[styles.tipCard, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
             <Text style={styles.tipEmoji}>{tip.emoji}</Text>
-            <Text style={styles.tipTitle}>{tip.title}</Text>
-            <Text style={styles.tipDescription}>{tip.description}</Text>
-            <View style={styles.tipCategoryBadge}>
-              <Text style={styles.tipCategoryText}>
+            <Text style={[styles.tipTitle, { color: theme.text }]}>{tip.title}</Text>
+            <Text style={[styles.tipDescription, { color: theme.textSecondary }]}>{tip.description}</Text>
+            <View style={[styles.tipCategoryBadge, { backgroundColor: theme.primaryLight }]}>
+              <Text style={[styles.tipCategoryText, { color: theme.text }]}>
                 {categories.find((cat) => cat.key === tip.category)?.label ||
                   "General"}
               </Text>

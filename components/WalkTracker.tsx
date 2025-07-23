@@ -9,12 +9,14 @@ import {
 } from 'react-native';
 import { WalkLog } from '../types';
 import { storeData, getData, calculateStreak } from '../utils';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface WalkTrackerProps {
   onWalkLogged: (walkLog: WalkLog) => void;
 }
 
 export default function WalkTracker({ onWalkLogged }: WalkTrackerProps) {
+  const { theme } = useTheme();
   const [streak, setStreak] = useState(0);
   const [todayWalked, setTodayWalked] = useState(false);
   const [walkLogs, setWalkLogs] = useState<WalkLog[]>([]);
@@ -118,15 +120,15 @@ export default function WalkTracker({ onWalkLogged }: WalkTrackerProps) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Post-Meal Walk 🚶‍♀️</Text>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <Text style={[styles.title, { color: theme.text }]}>Post-Meal Walk 🚶‍♀️</Text>
       
       {/* Streak Display */}
-      <View style={styles.streakContainer}>
+      <View style={[styles.streakContainer, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
         <Text style={styles.streakEmoji}>{getStreakEmoji()}</Text>
-        <Text style={styles.streakNumber}>{streak}</Text>
-        <Text style={styles.streakLabel}>Day Streak</Text>
-        <Text style={styles.motivationalText}>{getMotivationalText()}</Text>
+        <Text style={[styles.streakNumber, { color: theme.primary }]}>{streak}</Text>
+        <Text style={[styles.streakLabel, { color: theme.text }]}>Day Streak</Text>
+        <Text style={[styles.motivationalText, { color: theme.textSecondary }]}>{getMotivationalText()}</Text>
       </View>
 
       {/* Walk Button */}
@@ -134,6 +136,7 @@ export default function WalkTracker({ onWalkLogged }: WalkTrackerProps) {
         <TouchableOpacity
           style={[
             styles.walkButton,
+            { backgroundColor: todayWalked ? theme.success : theme.primary },
             todayWalked && styles.walkButtonCompleted
           ]}
           onPress={logWalk}
@@ -141,6 +144,7 @@ export default function WalkTracker({ onWalkLogged }: WalkTrackerProps) {
         >
           <Text style={[
             styles.walkButtonText,
+            { color: theme.buttonText },
             todayWalked && styles.walkButtonTextCompleted
           ]}>
             {todayWalked ? '✅ Walked Today!' : '🚶‍♀️ I Walked After Eating'}
@@ -149,24 +153,24 @@ export default function WalkTracker({ onWalkLogged }: WalkTrackerProps) {
       </Animated.View>
 
       {/* Tips */}
-      <View style={styles.tipsContainer}>
-        <Text style={styles.tipsTitle}>💡 Walking Tips</Text>
-        <Text style={styles.tipText}>• Walk for 10-15 minutes after meals</Text>
-        <Text style={styles.tipText}>• Light pace is perfect - no need to rush</Text>
-        <Text style={styles.tipText}>• Even a short walk helps digestion</Text>
-        <Text style={styles.tipText}>• Fresh air is a bonus! 🌬️</Text>
+      <View style={[styles.tipsContainer, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
+        <Text style={[styles.tipsTitle, { color: theme.text }]}>💡 Walking Tips</Text>
+        <Text style={[styles.tipText, { color: theme.textSecondary }]}>• Walk for 10-15 minutes after meals</Text>
+        <Text style={[styles.tipText, { color: theme.textSecondary }]}>• Light pace is perfect - no need to rush</Text>
+        <Text style={[styles.tipText, { color: theme.textSecondary }]}>• Even a short walk helps digestion</Text>
+        <Text style={[styles.tipText, { color: theme.textSecondary }]}>• Fresh air is a bonus! 🌬️</Text>
       </View>
 
       {/* Recent Activity */}
       {walkLogs.length > 0 && (
-        <View style={styles.recentActivity}>
-          <Text style={styles.recentTitle}>Recent Walks</Text>
+        <View style={[styles.recentActivity, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
+          <Text style={[styles.recentTitle, { color: theme.text }]}>Recent Walks</Text>
           {walkLogs
             .slice(-3)
             .reverse()
             .map((log, index) => (
-              <View key={log.id} style={styles.activityItem}>
-                <Text style={styles.activityDate}>
+              <View key={log.id} style={[styles.activityItem, { borderBottomColor: theme.border }]}>
+                <Text style={[styles.activityDate, { color: theme.textSecondary }]}>
                   {new Date(log.completedAt).toLocaleDateString('en-IN', {
                     weekday: 'short',
                     month: 'short',
