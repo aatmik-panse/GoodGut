@@ -9,12 +9,14 @@ import {
   Alert,
 } from "react-native";
 import * as Notifications from "expo-notifications";
+import { SchedulableTriggerInputTypes } from "expo-notifications";
 import { storeData, getData, getRandomWaterReminder } from "../utils";
 
 // Configure notifications
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
   }),
@@ -125,9 +127,9 @@ export default function WaterReminder() {
           sound: true,
         },
         trigger: {
+          type: SchedulableTriggerInputTypes.DAILY,
           hour: hours,
           minute: minutes,
-          repeats: true,
         },
       });
     }
