@@ -1,30 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, Text, View, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase.config';
-import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import React, { useState, useEffect } from "react";
+import { StatusBar } from "expo-status-bar";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase.config";
+import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 
 // Import components
-import ChewTracker from './components/ChewTracker';
-import WalkTracker from './components/WalkTracker';
-import DigestiveTips from './components/DigestiveTips';
-import WaterReminder from './components/WaterReminder';
-import GutBox from './components/GutBox';
-import AuthScreen from './screens/AuthScreen';
-import SplashScreen from './screens/SplashScreen';
+import ChewTracker from "./components/ChewTracker";
+import WalkTracker from "./components/WalkTracker";
+import DigestiveTips from "./components/DigestiveTips";
+import WaterReminder from "./components/WaterReminder";
+import GutBox from "./components/GutBox";
+import AuthScreen from "./screens/AuthScreen";
+import SplashScreen from "./screens/SplashScreen";
 
 // Import types
-import { ChewSession, WalkLog } from './types';
+import { ChewSession, WalkLog } from "./types";
 
 const Tab = createBottomTabNavigator();
 
 function TabIcon({ focused, emoji }: { focused: boolean; emoji: string }) {
   const { theme } = useTheme();
   return (
-    <Text style={[styles.tabIcon, { opacity: focused ? 1 : 0.6, color: theme.text }]}>
+    <Text
+      style={[
+        styles.tabIcon,
+        { opacity: focused ? 1 : 0.6, color: theme.text },
+      ]}
+    >
       {emoji}
     </Text>
   );
@@ -32,23 +43,21 @@ function TabIcon({ focused, emoji }: { focused: boolean; emoji: string }) {
 
 function ThemeToggle() {
   const { isDarkMode, toggleTheme, theme } = useTheme();
-  
+
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={[styles.themeToggle, { backgroundColor: theme.border }]}
       onPress={toggleTheme}
       activeOpacity={0.7}
     >
-      <View 
+      <View
         style={[
           styles.toggleSlider,
           { backgroundColor: theme.primary },
-          isDarkMode ? styles.toggleSliderRight : styles.toggleSliderLeft
+          isDarkMode ? styles.toggleSliderRight : styles.toggleSliderLeft,
         ]}
       >
-        <Text style={styles.toggleIcon}>
-          {isDarkMode ? '🌙' : '☀️'}
-        </Text>
+        <Text style={styles.toggleIcon}>{isDarkMode ? "🌙" : "☀️"}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -70,30 +79,34 @@ function AppContent() {
   }, []);
 
   const handleChewSessionComplete = (session: ChewSession) => {
-    console.log('Chew session completed:', session);
+    console.log("Chew session completed:", session);
     // Here you would typically save to Firebase
   };
 
   const handleWalkLogged = (walkLog: WalkLog) => {
-    console.log('Walk logged:', walkLog);
+    console.log("Walk logged:", walkLog);
     // Here you would typically save to Firebase
   };
 
   if (showSplash) {
     return <SplashScreen onFinish={() => setShowSplash(false)} />;
   }
-  
+
   if (loading) {
     return (
-      <View style={[styles.loadingContainer, { backgroundColor: theme.background }]}>
+      <View
+        style={[styles.loadingContainer, { backgroundColor: theme.background }]}
+      >
         <ActivityIndicator size="large" color={theme.primary} />
-        <Text style={[styles.loadingText, { color: theme.text }]}>Loading GoodGut...</Text>
+        <Text style={[styles.loadingText, { color: theme.text }]}>
+          Loading GoodGut...
+        </Text>
       </View>
     );
   }
 
   if (!user) {
-    return <AuthScreen onAuthSuccess={() => console.log('Auth successful')} />;
+    return <AuthScreen onAuthSuccess={() => console.log("Auth successful")} />;
   }
 
   return (
@@ -101,67 +114,84 @@ function AppContent() {
       <StatusBar style={isDarkMode ? "light" : "dark"} />
       <Tab.Navigator
         screenOptions={{
-          tabBarStyle: [styles.tabBar, { 
-            backgroundColor: theme.tabBackground,
-            borderTopColor: theme.tabBorder 
-          }],
+          tabBarStyle: [
+            styles.tabBar,
+            {
+              backgroundColor: theme.tabBackground,
+              borderTopColor: theme.tabBorder,
+            },
+          ],
           tabBarActiveTintColor: theme.tabActive,
           tabBarInactiveTintColor: theme.tabInactive,
-          headerStyle: [styles.header, { 
-            backgroundColor: theme.surface,
-            borderBottomColor: theme.border 
-          }],
+          headerStyle: [
+            styles.header,
+            {
+              backgroundColor: theme.surface,
+              borderBottomColor: theme.border,
+            },
+          ],
           headerTintColor: theme.text,
           headerTitleStyle: [styles.headerTitle, { color: theme.text }],
+          headerTitleAlign: "left",
         }}
       >
         <Tab.Screen
           name="Chew"
           options={{
-            title: 'Chew Counter',
-            tabBarIcon: ({ focused }) => <TabIcon focused={focused} emoji="🦷" />,
+            title: "Chew Counter",
+            tabBarIcon: ({ focused }) => (
+              <TabIcon focused={focused} emoji="🦷" />
+            ),
             headerRight: () => <ThemeToggle />,
           }}
         >
           {() => <ChewTracker onSessionComplete={handleChewSessionComplete} />}
         </Tab.Screen>
-        
+
         <Tab.Screen
           name="Walk"
           options={{
-            title: 'Post-Meal Walk',
-            tabBarIcon: ({ focused }) => <TabIcon focused={focused} emoji="🚶‍♀️" />,
+            title: "Post-Meal Walk",
+            tabBarIcon: ({ focused }) => (
+              <TabIcon focused={focused} emoji="🚶‍♀️" />
+            ),
             headerRight: () => <ThemeToggle />,
           }}
         >
           {() => <WalkTracker onWalkLogged={handleWalkLogged} />}
         </Tab.Screen>
-        
+
         <Tab.Screen
           name="Tips"
           options={{
-            title: 'What To Eat',
-            tabBarIcon: ({ focused }) => <TabIcon focused={focused} emoji="🍽️" />,
+            title: "What To Eat",
+            tabBarIcon: ({ focused }) => (
+              <TabIcon focused={focused} emoji="🍽️" />
+            ),
             headerRight: () => <ThemeToggle />,
           }}
           component={DigestiveTips}
         />
-        
+
         <Tab.Screen
           name="Water"
           options={{
-            title: 'Water Tracker',
-            tabBarIcon: ({ focused }) => <TabIcon focused={focused} emoji="💧" />,
+            title: "Water Tracker",
+            tabBarIcon: ({ focused }) => (
+              <TabIcon focused={focused} emoji="💧" />
+            ),
             headerRight: () => <ThemeToggle />,
           }}
           component={WaterReminder}
         />
-        
+
         <Tab.Screen
           name="GutBox"
           options={{
-            title: 'Gut Box',
-            tabBarIcon: ({ focused }) => <TabIcon focused={focused} emoji="📦" />,
+            title: "Gut Box",
+            tabBarIcon: ({ focused }) => (
+              <TabIcon focused={focused} emoji="📦" />
+            ),
             headerRight: () => <ThemeToggle />,
           }}
           component={GutBox}
@@ -182,19 +212,19 @@ export default function App() {
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f7fafc',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f7fafc",
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#4a5568',
+    color: "#4a5568",
   },
   tabBar: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderTopWidth: 1,
-    borderTopColor: '#e2e8f0',
+    borderTopColor: "#e2e8f0",
     paddingTop: 8,
     paddingBottom: 8,
     height: 70,
@@ -204,16 +234,16 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   header: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderBottomWidth: 1,
-    borderBottomColor: '#e2e8f0',
+    borderBottomColor: "#e2e8f0",
     elevation: 0,
     shadowOpacity: 0,
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'left',
+    fontWeight: "bold",
+    textAlign: "left",
   },
   // Theme toggle styles
   themeToggle: {
@@ -222,25 +252,25 @@ const styles = StyleSheet.create({
     borderRadius: 13,
     padding: 2,
     marginRight: 15,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   toggleSlider: {
     width: 22,
     height: 22,
     borderRadius: 11,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 2,
   },
   toggleSliderLeft: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   toggleSliderRight: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
   },
   toggleIcon: {
     fontSize: 12,

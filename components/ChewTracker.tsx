@@ -402,10 +402,7 @@ export default function ChewTracker({ onSessionComplete }: ChewTrackerProps) {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
-        <View style={styles.titleContainer}>
-          <Text style={[styles.title, { color: theme.text }]}>Chew Counter 🦷</Text>
-        </View>
+
 
         {/* Mode Selector */}
         <View style={[styles.modeSelector, { backgroundColor: theme.buttonSecondary }]}>
@@ -573,18 +570,6 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
     minHeight: "100%",
-  },
-  titleContainer: {
-    width: "100%",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#2d3748",
-    marginBottom: 30,
-    textAlign: "center",
   },
   modeSelector: {
     flexDirection: "row",

@@ -121,8 +121,6 @@ export default function WalkTracker({ onWalkLogged }: WalkTrackerProps) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <Text style={[styles.title, { color: theme.text }]}>Post-Meal Walk 🚶‍♀️</Text>
-      
       {/* Streak Display */}
       <View style={[styles.streakContainer, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
         <Text style={styles.streakEmoji}>{getStreakEmoji()}</Text>

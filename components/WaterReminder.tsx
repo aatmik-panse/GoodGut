@@ -181,8 +181,6 @@ export default function WaterReminder() {
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
-      <Text style={[styles.title, { color: theme.text }]}>Water Tracker 💧</Text>
-
       {/* Progress Section */}
       <View style={[styles.progressSection, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
         <Text style={[styles.progressText, { color: theme.text }]}>

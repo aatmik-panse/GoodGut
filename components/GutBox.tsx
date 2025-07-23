@@ -126,8 +126,6 @@ export default function GutBox() {
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
-      <Text style={[styles.title, { color: theme.text }]}>Gut Box Checklist 📦</Text>
-
       {/* Progress Section */}
       <View style={[styles.progressSection, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
         <Text style={[styles.progressText, { color: theme.text }]}>

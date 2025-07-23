@@ -65,8 +65,6 @@ export default function DigestiveTips() {
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
-      <Text style={[styles.title, { color: theme.text }]}>What To Eat Today 🍽️</Text>
-
       {/* Today's Featured Tip */}
       <Animated.View style={[styles.featuredTip, { opacity: fadeAnim, backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
         <View style={styles.featuredHeader}>
