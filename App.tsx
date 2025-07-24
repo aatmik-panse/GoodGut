@@ -30,14 +30,26 @@ const Tab = createBottomTabNavigator();
 function TabIcon({ focused, emoji }: { focused: boolean; emoji: string }) {
   const { theme } = useTheme();
   return (
-    <Text
-      style={[
-        styles.tabIcon,
-        { opacity: focused ? 1 : 0.6, color: theme.text },
-      ]}
-    >
-      {emoji}
-    </Text>
+    <View style={[
+      styles.tabIconContainer,
+      {
+        backgroundColor: focused ? theme.primary + '15' : 'transparent',
+        borderColor: focused ? theme.primary : 'transparent',
+      }
+    ]}>
+      <Text
+        style={[
+          styles.tabIcon,
+          { 
+            opacity: focused ? 1 : 0.7, 
+            color: focused ? theme.primary : theme.textSecondary,
+            transform: [{ scale: focused ? 1.1 : 1 }]
+          },
+        ]}
+      >
+        {emoji}
+      </Text>
+    </View>
   );
 }
 
@@ -46,7 +58,14 @@ function ThemeToggle() {
 
   return (
     <TouchableOpacity
-      style={[styles.themeToggle, { backgroundColor: theme.border }]}
+      style={[
+        styles.themeToggle, 
+        { 
+          backgroundColor: isDarkMode ? theme.primary + '20' : theme.surface,
+          borderColor: theme.border,
+          shadowColor: theme.shadow,
+        }
+      ]}
       onPress={toggleTheme}
       activeOpacity={0.7}
     >
@@ -119,6 +138,15 @@ function AppContent() {
             {
               backgroundColor: theme.tabBackground,
               borderTopColor: theme.tabBorder,
+              borderTopWidth: 0.5,
+              height: 70,
+              paddingBottom: 12,
+              paddingTop: 8,
+              shadowColor: theme.shadow,
+              shadowOffset: { width: 0, height: -2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              elevation: 8,
             },
           ],
           tabBarActiveTintColor: theme.tabActive,
@@ -214,7 +242,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f7fafc",
+    backgroundColor: "#f8f9ff",
   },
   loadingText: {
     marginTop: 10,
@@ -229,9 +257,18 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     height: 70,
   },
+  tabIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    marginBottom: 2,
+  },
   tabIcon: {
-    fontSize: 24,
-    marginBottom: 4,
+    fontSize: 22,
+    fontWeight: '600',
   },
   header: {
     backgroundColor: "white",

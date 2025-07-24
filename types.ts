@@ -10,9 +10,10 @@ export interface ChewSession {
   userId: string;
   chewCount: number;
   targetChews: number;
-  mode: 'tap' | 'timer';
+  mode: "tap" | "timer";
   completedAt?: Date;
   createdAt: Date;
+  duration?: number;
 }
 
 export interface WalkLog {
@@ -43,8 +44,8 @@ export interface DigestiveTip {
   id: string;
   title: string;
   description: string;
-  category: 'bloating' | 'fried-food' | 'exam-stress' | 'general';
+  category: "bloating" | "fried-food" | "exam-stress" | "general";
   emoji: string;
 }
 
-export type TabName = 'chew' | 'walk' | 'tips' | 'water' | 'gutbox';
+export type TabName = "chew" | "walk" | "tips" | "water" | "gutbox";

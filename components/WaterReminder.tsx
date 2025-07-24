@@ -160,6 +160,24 @@ export default function WaterReminder() {
     return "Let's start hydrating! 🚰";
   };
 
+  const getHydrationStatus = () => {
+    const percentage = (waterCount / dailyGoal) * 100;
+    if (percentage >= 100) return "🎉 Fully Hydrated!";
+    if (percentage >= 75) return "💪 Well Hydrated";
+    if (percentage >= 50) return "🌊 Good Progress";
+    if (percentage >= 25) return "🚀 Getting Started";
+    return "💧 Need More Water";
+  };
+
+  const getHydrationColor = () => {
+    const percentage = (waterCount / dailyGoal) * 100;
+    if (percentage >= 100) return theme.success;
+    if (percentage >= 75) return theme.info;
+    if (percentage >= 50) return theme.primary;
+    if (percentage >= 25) return theme.warning;
+    return theme.danger;
+  };
+
   const renderWaterGlasses = () => {
     const glasses = [];
     for (let i = 0; i < dailyGoal; i++) {
@@ -180,21 +198,59 @@ export default function WaterReminder() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
-      {/* Progress Section */}
-      <View style={[styles.progressSection, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
-        <Text style={[styles.progressText, { color: theme.text }]}>
-          {waterCount}/{dailyGoal} glasses
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Water Progress Card */}
+      <View
+        style={[
+          styles.progressCard,
+          { 
+            backgroundColor: theme.surface, 
+            shadowColor: theme.shadow,
+            borderColor: theme.border 
+          },
+        ]}
+      >
+        <Text style={[styles.cardTitle, { color: theme.text }]}>💧 Daily Hydration Goal</Text>
+        <View style={styles.waterDisplay}>
+          <Text style={[styles.waterCount, { color: theme.primary }]}>
+            {waterCount}
+          </Text>
+          <Text style={[styles.waterGoal, { color: theme.textSecondary }]}>/ {dailyGoal}</Text>
+        </View>
+        <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+          glasses of water
         </Text>
-        <View style={[styles.progressBar, { backgroundColor: theme.border }]}>
+        
+        {/* Enhanced Progress Bar */}
+        <View style={[styles.progressBar, { backgroundColor: theme.borderLight }]}>
           <View
             style={[
               styles.progressFill,
-              { width: `${getProgressPercentage()}%`, backgroundColor: theme.primary },
+              {
+                width: `${Math.min((waterCount / dailyGoal) * 100, 100)}%`,
+                backgroundColor: theme.info,
+              },
+            ]}
+          />
+          <View
+            style={[
+              styles.progressGlow,
+              {
+                width: `${Math.min((waterCount / dailyGoal) * 100, 100)}%`,
+                backgroundColor: theme.info,
+                shadowColor: theme.info,
+              },
             ]}
           />
         </View>
-        <Text style={[styles.motivationalText, { color: theme.textSecondary }]}>{getMotivationalMessage()}</Text>
+        
+        {/* Hydration Status */}
+        <Text style={[styles.statusText, { color: getHydrationColor() }]}>
+          {getHydrationStatus()}
+        </Text>
       </View>
 
       {/* Water Glasses Visual */}
@@ -282,6 +338,56 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f0f9ff",
   },
+  progressCard: {
+    backgroundColor: "white",
+    margin: 20,
+    padding: 25,
+    borderRadius: 20,
+    alignItems: "center",
+    borderWidth: 1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  waterDisplay: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    marginBottom: 8,
+  },
+  waterCount: {
+    fontSize: 48,
+    fontWeight: "700",
+  },
+  waterGoal: {
+    fontSize: 24,
+    fontWeight: "500",
+    marginLeft: 4,
+  },
+  subtitle: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  progressGlow: {
+    position: "absolute",
+    height: "100%",
+    borderRadius: 6,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  statusText: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginTop: 12,
+  },
   title: {
     fontSize: 28,
     fontWeight: "bold",
@@ -356,10 +462,11 @@ const styles = StyleSheet.create({
   addButton: {
     backgroundColor: "#3182ce",
     paddingHorizontal: 30,
-    paddingVertical: 15,
-    borderRadius: 25,
+    paddingVertical: 18,
+    borderRadius: 16,
     marginHorizontal: 15,
-    shadowColor: "#3182ce",
+    alignItems: "center",
+    borderWidth: 1,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -368,7 +475,12 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: "white",
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "700",
+  },
+  addButtonSubtext: {
+    fontSize: 14,
+    fontWeight: "500",
+    marginTop: 4,
   },
   removeButton: {
     backgroundColor: "#e2e8f0",

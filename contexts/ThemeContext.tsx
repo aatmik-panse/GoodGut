@@ -20,68 +20,92 @@ export const useTheme = () => {
 // Light theme colors
 export const lightTheme = {
   // Background colors
-  background: '#f8f9ff',
+  background: '#f8fafc',
   surface: '#ffffff',
-  surfaceSecondary: '#f8f9ff',
+  surfaceSecondary: '#f1f5f9',
+  surfaceElevated: '#ffffff',
   
   // Text colors
-  text: '#2d3748',
+  text: '#1a202c',
   textSecondary: '#4a5568',
   textTertiary: '#718096',
+  textMuted: '#a0aec0',
   
   // Primary colors
-  primary: '#667eea',
-  primaryLight: '#90cdf4',
-  success: '#48bb78',
+  primary: '#6366f1',
+  primaryLight: '#8b5cf6',
+  primaryDark: '#4f46e5',
+  success: '#10b981',
+  warning: '#f59e0b',
+  danger: '#ef4444',
+  info: '#3b82f6',
+  
+  // Gradient colors
+  gradientStart: '#6366f1',
+  gradientEnd: '#8b5cf6',
   
   // UI element colors
   border: '#e2e8f0',
+  borderLight: '#f1f5f9',
   shadow: '#000000',
+  overlay: 'rgba(0, 0, 0, 0.5)',
   
   // Tab colors
   tabBackground: '#ffffff',
   tabBorder: '#e2e8f0',
-  tabActive: '#667eea',
-  tabInactive: '#a0aec0',
+  tabActive: '#6366f1',
+  tabInactive: '#9ca3af',
   
   // Button colors
-  buttonSecondary: '#e2e8f0',
-  buttonSecondaryText: '#4a5568',
-  buttonDisabled: '#cbd5e0',
+  buttonSecondary: '#f1f5f9',
+  buttonSecondaryText: '#374151',
+  buttonDisabled: '#d1d5db',
   buttonDisabledText: '#a0aec0',
 };
 
 // Dark theme colors
 export const darkTheme = {
   // Background colors
-  background: '#1a202c',
-  surface: '#2d3748',
-  surfaceSecondary: '#4a5568',
+  background: '#0f172a',
+  surface: '#1e293b',
+  surfaceSecondary: '#0f172a',
+  surfaceElevated: '#334155',
   
   // Text colors
-  text: '#f7fafc',
+  text: '#f8fafc',
   textSecondary: '#e2e8f0',
-  textTertiary: '#cbd5e0',
+  textTertiary: '#94a3b8',
+  textMuted: '#64748b',
   
   // Primary colors
-  primary: '#90cdf4',
-  primaryLight: '#bee3f8',
-  success: '#68d391',
+  primary: '#8b5cf6',
+  primaryLight: '#a78bfa',
+  primaryDark: '#7c3aed',
+  success: '#22c55e',
+  warning: '#fbbf24',
+  danger: '#f87171',
+  info: '#60a5fa',
+  
+  // Gradient colors
+  gradientStart: '#8b5cf6',
+  gradientEnd: '#6366f1',
   
   // UI element colors
-  border: '#4a5568',
+  border: '#334155',
+  borderLight: '#475569',
   shadow: '#000000',
+  overlay: 'rgba(0, 0, 0, 0.7)',
   
   // Tab colors
-  tabBackground: '#2d3748',
-  tabBorder: '#4a5568',
-  tabActive: '#90cdf4',
-  tabInactive: '#718096',
+  tabBackground: '#1e293b',
+  tabBorder: '#334155',
+  tabActive: '#8b5cf6',
+  tabInactive: '#64748b',
   
   // Button colors
-  buttonSecondary: '#4a5568',
+  buttonSecondary: '#334155',
   buttonSecondaryText: '#e2e8f0',
-  buttonDisabled: '#2d3748',
+  buttonDisabled: '#475569',
   buttonDisabledText: '#718096',
 };
 
