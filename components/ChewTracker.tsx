@@ -13,6 +13,7 @@ import * as Haptics from "expo-haptics";
 import { soundUtils } from "../utils/soundUtils";
 import { ChewSession } from "../types";
 import { useTheme } from "../contexts/ThemeContext";
+import FaceMeshDetector from "./FaceMeshDetector";
 
 interface ChewTrackerProps {
   onSessionComplete: (session: ChewSession) => void;
@@ -20,7 +21,7 @@ interface ChewTrackerProps {
 
 export default function ChewTracker({ onSessionComplete }: ChewTrackerProps) {
   const { theme } = useTheme();
-  const [mode, setMode] = useState<"tap" | "timer">("tap");
+  const [mode, setMode] = useState<"tap" | "timer" | "ai">("tap");
   const [chewCount, setChewCount] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30);
@@ -127,7 +128,7 @@ export default function ChewTracker({ onSessionComplete }: ChewTrackerProps) {
       setLapCount(newLapNumber);
     }
   };
-  
+
   // Function to manually finish current chew cycle
   const finishCurrentChew = () => {
     if (chewCount > 0 || isActive) {
@@ -146,7 +147,7 @@ export default function ChewTracker({ onSessionComplete }: ChewTrackerProps) {
         // Add the current cycle as completed
         addCompletedLap();
       }
-      
+
       // Reset chew count for next cycle
       setChewCount(0);
       progressAnim.setValue(0);
@@ -397,17 +398,23 @@ export default function ChewTracker({ onSessionComplete }: ChewTrackerProps) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-
-
         {/* Mode Selector */}
-        <View style={[styles.modeSelector, { backgroundColor: theme.buttonSecondary }]}>
+        <View
+          style={[
+            styles.modeSelector,
+            { backgroundColor: theme.buttonSecondary },
+          ]}
+        >
           <TouchableOpacity
-            style={[styles.modeButton, mode === "tap" && styles.activeModeButton]}
+            style={[
+              styles.modeButton,
+              mode === "tap" && styles.activeModeButton,
+            ]}
             onPress={() => setMode("tap")}
           >
             <Text
@@ -424,38 +431,56 @@ export default function ChewTracker({ onSessionComplete }: ChewTrackerProps) {
             onPress={() => setMode("timer")}
           >
             <Text
-              style={[styles.modeText, mode === "timer" && styles.activeModeText]}
+              style={[
+                styles.modeText,
+                mode === "timer" && styles.activeModeText,
+              ]}
             >
               Timer Mode
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.modeButton,
+              mode === "ai" && styles.activeModeButton,
+            ]}
+            onPress={() => setMode("ai")}
+          >
+            <Text
+              style={[styles.modeText, mode === "ai" && styles.activeModeText]}
+            >
+              AI Mode
             </Text>
           </TouchableOpacity>
         </View>
 
         {/* Enhanced Progress Bar with Glow */}
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
-            <Animated.View
-              style={[styles.progressFill, { width: progressWidth }]}
-            />
-            <Animated.View
+        {mode !== "ai" && (
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBar}>
+              <Animated.View
+                style={[styles.progressFill, { width: progressWidth }]}
+              />
+              <Animated.View
+                style={[
+                  styles.progressGlow,
+                  {
+                    width: progressWidth,
+                    opacity: glowOpacity,
+                  },
+                ]}
+              />
+            </View>
+            <Animated.Text
               style={[
-                styles.progressGlow,
-                {
-                  width: progressWidth,
-                  opacity: glowOpacity,
-                },
+                styles.progressText,
+                { transform: [{ translateY: bounceTranslateY }] },
               ]}
-            />
+            >
+              {chewCount}/{targetChews} chews
+            </Animated.Text>
           </View>
-          <Animated.Text
-            style={[
-              styles.progressText,
-              { transform: [{ translateY: bounceTranslateY }] },
-            ]}
-          >
-            {chewCount}/{targetChews} chews
-          </Animated.Text>
-        </View>
+        )}
 
         {/* Enhanced Main Action Area */}
         {mode === "tap" ? (
@@ -488,7 +513,7 @@ export default function ChewTracker({ onSessionComplete }: ChewTrackerProps) {
               </Animated.View>
             </View>
           </Animated.View>
-        ) : (
+        ) : mode === "timer" ? (
           <View style={styles.timerArea}>
             <Text style={styles.timerText}>{timeLeft}s</Text>
             <TouchableOpacity
@@ -501,51 +526,91 @@ export default function ChewTracker({ onSessionComplete }: ChewTrackerProps) {
               </Text>
             </TouchableOpacity>
           </View>
+        ) : (
+          <FaceMeshDetector isActive={mode === "ai"} />
         )}
 
-        {/* Action Buttons */}
-        <View style={styles.actionButtonsContainer}>
-          <TouchableOpacity 
+        {/* Action Buttons - Hidden in AI mode */}
+        {mode !== "ai" && (
+          <View style={styles.actionButtonsContainer}>
+            <TouchableOpacity
+              style={[
+                styles.actionButton,
+                styles.finishButton,
+                chewCount === 0 && !isActive && styles.disabledButton,
+              ]}
+              onPress={finishCurrentChew}
+              disabled={chewCount === 0 && !isActive}
+            >
+              <Text
+                style={[
+                  styles.actionButtonText,
+                  styles.finishButtonText,
+                  chewCount === 0 && !isActive && styles.disabledButtonText,
+                ]}
+              >
+                Finish This Chew
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.actionButton, styles.resetButton]}
+              onPress={resetSession}
+            >
+              <Text style={[styles.actionButtonText, styles.resetButtonText]}>
+                Reset
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Session Timer - Hidden in AI mode */}
+        {mode !== "ai" && (
+          <View
             style={[
-              styles.actionButton, 
-              styles.finishButton,
-              (chewCount === 0 && !isActive) && styles.disabledButton
-            ]} 
-            onPress={finishCurrentChew}
-            disabled={chewCount === 0 && !isActive}
+              styles.timerContainer,
+              { backgroundColor: theme.surface, shadowColor: theme.shadow },
+            ]}
           >
-            <Text style={[
-              styles.actionButtonText,
-              styles.finishButtonText,
-              (chewCount === 0 && !isActive) && styles.disabledButtonText
-            ]}>Finish This Chew</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={[styles.actionButton, styles.resetButton]} onPress={resetSession}>
-            <Text style={[styles.actionButtonText, styles.resetButtonText]}>Reset</Text>
-          </TouchableOpacity>
-        </View>
+            <Text style={[styles.timerLabel, { color: theme.textSecondary }]}>
+              Session Time
+            </Text>
+            <Text style={[styles.timerDisplay, { color: theme.primary }]}>
+              {sessionStartTime ? formatTime(currentTime) : "00:00"}
+            </Text>
+          </View>
+        )}
 
-        {/* Session Timer */}
-        <View style={[styles.timerContainer, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
-          <Text style={[styles.timerLabel, { color: theme.textSecondary }]}>Session Time</Text>
-          <Text style={[styles.timerDisplay, { color: theme.primary }]}>
-            {sessionStartTime ? formatTime(currentTime) : "00:00"}
-          </Text>
-        </View>
-
-        {/* Cycle Times List */}
-        {lapTimes.length > 0 && (
-          <View style={[styles.lapContainer, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}>
-            <Text style={[styles.lapHeader, { color: theme.text }]}>Completed Cycles</Text>
+        {/* Cycle Times List - Hidden in AI mode */}
+        {mode !== "ai" && lapTimes.length > 0 && (
+          <View
+            style={[
+              styles.lapContainer,
+              { backgroundColor: theme.surface, shadowColor: theme.shadow },
+            ]}
+          >
+            <Text style={[styles.lapHeader, { color: theme.text }]}>
+              Completed Cycles
+            </Text>
             <ScrollView
               style={styles.lapScrollView}
               showsVerticalScrollIndicator={false}
               nestedScrollEnabled={true}
             >
               {lapTimes.map((lap, index) => (
-                <View key={index} style={[styles.lapItem, { backgroundColor: theme.surfaceSecondary, borderLeftColor: theme.primary }]}>
-                  <Text style={[styles.lapText, { color: theme.textSecondary }]}>
+                <View
+                  key={index}
+                  style={[
+                    styles.lapItem,
+                    {
+                      backgroundColor: theme.surfaceSecondary,
+                      borderLeftColor: theme.primary,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[styles.lapText, { color: theme.textSecondary }]}
+                  >
                     Cycle {lap.lap}: {lap.time}
                   </Text>
                 </View>
